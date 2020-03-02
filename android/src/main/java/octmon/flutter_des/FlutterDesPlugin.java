@@ -17,6 +17,11 @@ import javax.crypto.spec.IvParameterSpec;
 
 /** FlutterDesPlugin */
 public class FlutterDesPlugin implements MethodCallHandler {
+
+  // 写死iv的值
+  private static byte[] iv1 = {(byte) 0x12, (byte) 0x34, (byte) 0x56,
+            (byte) 0x78, (byte) 0x90, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF};
+
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
     final MethodChannel channel = new MethodChannel(registrar.messenger(), "flutter_des");
@@ -27,7 +32,7 @@ public class FlutterDesPlugin implements MethodCallHandler {
   public void onMethodCall(MethodCall call, Result result) {
     ArrayList arguments = (ArrayList) call.arguments;
     String key = (String) arguments.get(1);
-    String iv = (String) arguments.get(2);
+    byte[] iv  = iv1;
     switch (call.method) {
         case "encrypt":
             result.success(encrypt((String) arguments.get(0), key, iv));
@@ -48,6 +53,8 @@ public class FlutterDesPlugin implements MethodCallHandler {
   }
 
   private static final String ALGORITHM_DES = "DES/CBC/PKCS5Padding";
+
+  
 
   /**
    * 加密
@@ -87,7 +94,7 @@ public class FlutterDesPlugin implements MethodCallHandler {
       //key的长度不能够小于8位字节
       Key secretKey = keyFactory.generateSecret(dks);
       Cipher cipher = Cipher.getInstance(ALGORITHM_DES);
-      AlgorithmParameterSpec paramSpec = new IvParameterSpec(iv.getBytes());
+      AlgorithmParameterSpec paramSpec = new IvParameterSpec(iv);
       cipher.init(Cipher.ENCRYPT_MODE, secretKey,paramSpec);
       return cipher.doFinal(data.getBytes());
     }catch(Exception e){
@@ -113,7 +120,7 @@ public class FlutterDesPlugin implements MethodCallHandler {
       //key的长度不能够小于8位字节
       Key secretKey = keyFactory.generateSecret(dks);
       Cipher cipher = Cipher.getInstance(ALGORITHM_DES);
-      AlgorithmParameterSpec paramSpec = new IvParameterSpec(iv.getBytes());
+      AlgorithmParameterSpec paramSpec = new IvParameterSpec(iv);
       cipher.init(Cipher.DECRYPT_MODE, secretKey, paramSpec);
       return new String(cipher.doFinal(data));
     } catch (Exception e){
