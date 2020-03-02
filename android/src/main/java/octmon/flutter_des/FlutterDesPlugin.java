@@ -59,14 +59,14 @@ public class FlutterDesPlugin implements MethodCallHandler {
   /**
    * 加密
    */
-  private static String encryptToHex(String originStr, String secretKey, String iv) {
+  private static String encryptToHex(String originStr, String secretKey,byte[] iv) {
     return byte2hex(encrypt(originStr, secretKey, iv));
   }
 
   /**
    * 解密
    */
-  private static String decryptFromHex(String encryptHexStr, String secretKey, String iv) {
+  private static String decryptFromHex(String encryptHexStr, String secretKey, byte[] iv) {
     if(encryptHexStr == null || iv == null)
       return null;
     try {
@@ -85,7 +85,7 @@ public class FlutterDesPlugin implements MethodCallHandler {
    * @param iv  偏移量
    * @return 加密后的字节数组，一般结合Base64编码使用
    */
-  private static byte[] encrypt(String data, String key, String iv) {
+  private static byte[] encrypt(String data, String key, byte[] iv) {
     if(data == null || iv == null)
       return null;
     try{
@@ -111,7 +111,7 @@ public class FlutterDesPlugin implements MethodCallHandler {
    * @param iv  偏移量
    * @return 解密后的字节数组
    */
-  private static String decrypt(byte[] data, String key, String iv) {
+  private static String decrypt(byte[] data, String key, byte[] iv) {
     if(data == null || iv == null)
       return null;
     try {
